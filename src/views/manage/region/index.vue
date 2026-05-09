@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!-- 搜索表单 -->
     <el-form
       :model="queryParams"
       ref="queryRef"
@@ -22,6 +23,7 @@
       </el-form-item>
     </el-form>
 
+    <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -68,6 +70,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
+    <!-- 表格 -->
     <el-table v-loading="loading" :data="regionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" type="index" width="50px" />
@@ -79,7 +82,13 @@
           <el-button
             link
             type="primary"
-            icon="Edit"
+            @click="handleDetail(scope.row)"
+            v-hasPermi="['manage:region:edit']"
+            >查看详情</el-button
+          >
+          <el-button
+            link
+            type="primary"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['manage:region:edit']"
             >修改</el-button
@@ -87,7 +96,6 @@
           <el-button
             link
             type="primary"
-            icon="Delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['manage:region:remove']"
             >删除</el-button
@@ -96,6 +104,7 @@
       </el-table-column>
     </el-table>
 
+    <!-- 分页组件 -->
     <pagination
       v-show="total > 0"
       :total="total"
@@ -121,12 +130,27 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 查看区域详情对话框 -->
+    <el-dialog title="区域详情" v-model="detailOpen" width="500px" append-to-body>
+      <el-form ref="regionRef" :model="detailForm" label-width="80px">
+        <el-form-item label="区域名称:" prop="regionName">
+          {{ detailForm.regionName }}
+        </el-form-item>
+      </el-form>
+      <el-table :data="detailForm.nodeList" style="width: 100%">
+        <el-table-column label="序号" align="center" type="index" width="50px" />
+        <el-table-column prop="nodeName" label="点位名称" align="center" />
+        <el-table-column prop="vmCount" label="设备数量" align="center" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Region">
 import { listRegion, getRegion, delRegion, addRegion, updateRegion } from "@/api/manage/region";
-import { ElTableColumn } from "element-plus";
+import { listNode } from "@/api/manage/node";
+import { loadAllParams } from "@/api/page";
 
 const { proxy } = getCurrentInstance();
 
@@ -139,6 +163,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const detailOpen = ref(false); // 查看区域详情对话框是否显示
 
 const data = reactive({
   form: {},
@@ -161,6 +186,25 @@ function getList() {
     regionList.value = response.rows;
     total.value = response.total;
     loading.value = false;
+  });
+}
+
+/** 查看区域详情 */
+const detailForm = ref({});
+
+function handleDetail(row) {
+  reset();
+  // 查看区域详情
+  const _id = row.id;
+  getRegion(_id).then((response) => {
+    detailForm.value = response.data;
+    detailOpen.value = true;
+  });
+  // 根据区域id查找点位数据
+  loadAllParams.regionId = _id;
+  listNode(loadAllParams).then((response) => {
+    detailForm.value.nodeList = response.rows;
+    detailOpen.value = true;
   });
 }
 
