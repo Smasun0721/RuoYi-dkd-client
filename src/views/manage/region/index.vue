@@ -115,7 +115,7 @@
 
     <!-- 添加或修改区域管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="regionRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="regionRef" :model="form" :rules="rules" label-width="80px" @submit.prevent>
         <el-form-item label="区域名称" prop="regionName">
           <el-input v-model="form.regionName" placeholder="请输入区域名称" />
         </el-form-item>
