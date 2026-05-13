@@ -88,7 +88,6 @@
       <el-table-column label="货道行" align="center" prop="vmRow" />
       <el-table-column label="货道列" align="center" prop="vmCol" />
       <el-table-column label="设备容量" align="center" prop="channelMaxCapacity" />
-      <el-table-column label="创建日期" align="center" prop="createTime" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button

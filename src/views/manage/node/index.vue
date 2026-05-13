@@ -186,11 +186,19 @@
 
     <!-- 点位详情对话框 -->
     <el-dialog title="点位详情" v-model="viewOpen" width="500px" append-to-body>
-      <el-table>
+      <el-table v-loading="loading" :data="vmList">
         <el-table-column label="序号" align="center" type="index" width="50" />
-        <el-table-column label="设备编号" align="center" prop="nodeCode" />
-        <el-table-column label="设备状态" align="center" prop="status" />
-        <el-table-column label="最后一次供货时间" align="center" prop="lastSupplyTime" />
+        <el-table-column label="设备编号" align="center" prop="innerCode" />
+        <el-table-column label="设备状态" align="center" prop="vmStatus">
+          <template #default="scope">
+            <dict-tag :options="vm_status" :value="scope.row.vmStatus" />
+          </template>
+        </el-table-column>
+        <el-table-column label="最后一次供货时间" align="center" prop="lastSupplyTime" width="180">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.lastSupplyTime, "YYYY-MM-DD HH:mm:ss") }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -200,10 +208,20 @@
 import { listNode, getNode, delNode, addNode, updateNode } from "@/api/manage/node";
 import { listRegion } from "@/api/manage/region";
 import { listPartner } from "@/api/manage/partner";
+import { listVm } from "@/api/manage/vm";
 import { loadAllParams } from "@/api/page";
+import dayjs from "dayjs";
+
+function parseTime(time, pattern = "YYYY-MM-DD HH:mm:ss") {
+  if (!time) return "";
+  const d = dayjs(time);
+  return d.isValid() ? d.format(pattern) : time;
+}
 
 const { proxy } = getCurrentInstance();
 const { business_type } = proxy.useDict("business_type");
+/* 引入设备状态数据字典 */
+const { vm_status } = proxy.useDict("vm_status");
 
 const nodeList = ref([]);
 const open = ref(false);
@@ -262,13 +280,22 @@ function loadAllPartner() {
   });
 }
 
-//查看点位详情
+// 查询所有设备列表
+const vmList = ref([]);
+function loadAllVm(row) {
+  loadAllParams.nodeId = row.id;
+  listVm(loadAllParams).then((response) => {
+    vmList.value = response.rows;
+  });
+}
+
 function handleView(row) {
   reset();
-  const _id = row.id || ids.value;
-  getNode(_id).then((response) => {
-    form.value = response.data;
+  loadAllParams.nodeId = row.id;
+  listVm(loadAllParams).then((response) => {
+    vmList.value = response.rows;
     viewOpen.value = true;
+    console.log(vmList.value[0]?.lastSupplyTime);
   });
 }
 
@@ -378,6 +405,10 @@ function handleExport() {
     },
     `node_${new Date().getTime()}.xlsx`,
   );
+}
+
+function formatLastSupplyTime(lastSupplyTime) {
+  return parseTime(lastSupplyTime, "{y}-{m}-{d} {h}:{i}:{s}");
 }
 
 loadAllRegion();
