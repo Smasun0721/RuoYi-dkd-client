@@ -104,7 +104,7 @@
           <el-button
             link
             type="primary"
-            @click="handleUpdate(scope.row)"
+            @click="handleUpdatePolicy(scope.row)"
             v-hasPermi="['manage:vm:edit']"
             >策略</el-button
           >
@@ -191,6 +191,28 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 策略管理对话框 -->
+    <el-dialog title="策略管理" v-model="openPolicy" width="500px" append-to-body>
+      <el-form ref="vmRef" :model="form" label-width="80px">
+        <el-form-item label="策略名称:" prop="policyId">
+          <el-select v-model="form.policyId" placeholder="请选择">
+            <el-option
+              v-for="item in policyList"
+              :key="item.policyId"
+              :label="item.policyName"
+              :value="item.policyId"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -200,6 +222,7 @@ import { listVmType } from "@/api/manage/vmType";
 import { listPartner } from "@/api/manage/partner";
 import { listNode } from "@/api/manage/node";
 import { listRegion } from "@/api/manage/region";
+import { listPolicy } from "@/api/manage/policy";
 import { loadAllParams } from "@/api/page";
 
 const { proxy } = getCurrentInstance();
@@ -282,9 +305,27 @@ function getRegionList() {
   });
 }
 
+//设备策略管理
+const openPolicy = ref(false);
+function handleUpdatePolicy(row) {
+  form.value.id = row.id;
+  form.value.policyId = row.policyId;
+  getPolicyList();
+  openPolicy.value = true;
+}
+
+//查询策略列表
+const policyList = ref([]);
+function getPolicyList() {
+  listPolicy(loadAllParams).then((response) => {
+    policyList.value = response.rows;
+  });
+}
+
 // 取消按钮
 function cancel() {
   open.value = false;
+  openPolicy.value = false; // 关闭策略对话框
   reset();
 }
 
@@ -357,6 +398,7 @@ function submitForm() {
       if (form.value.id != null) {
         updateVm(form.value).then((response) => {
           proxy.$modal.msgSuccess("修改成功");
+          openPolicy.value = false; // 关闭策略对话框
           open.value = false;
           getList();
         });
