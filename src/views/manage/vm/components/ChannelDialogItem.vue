@@ -16,14 +16,16 @@
     </div>
     <div>
       <el-button
-        type="text"
+        type="primary"
+        link
         class="el-button--primary-text"
         @click="handleSetClick"
       >
         添加
       </el-button>
       <el-button
-        type="text"
+        type="danger"
+        link
         class="el-button--danger-text"
         :disabled="!channel.sku ? true : false"
         @click="handleRemoveClick"
