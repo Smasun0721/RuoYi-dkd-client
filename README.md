@@ -1,19 +1,65 @@
-<p align="center" >
-<span style="background-color: #5373e0;display: inline-block"> 
-<img alt="logo" src="https://likede2-admin.itheima.net/img/logo.3673fab5.png">
-</span>
-</p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">帝可得</h1>
-<h4 align="center">基于RuoYi（SpringBoot+Vue前后端分离）的Java快速开发框架</h4>
+# 帝可得后台管理系统（前端）
 
+![Vue](https://img.shields.io/badge/Vue-3-42B883?logo=vue.js&logoColor=white)
+![Vite](https://img.shields.io/badge/Build-Vite-646CFF?logo=vite&logoColor=white)
+![Element Plus](https://img.shields.io/badge/UI-Element%20Plus-409EFF)
+![RuoYi](https://img.shields.io/badge/Framework-RuoYi%203.8.7-4B6BFB)
 
-## 背景介绍
+基于 RuoYi-Vue 3.8.7 前端脚手架开发的“帝可得”后台管理系统前端，提供商品、货道、工单、订单、策略和设备等管理页面。
 
-智能售货机项目是随着互联网及物联网技术的普及及发展，运用现有技术对传统售货机进行改造升级，从B端角度来提升传统售货机的的运营、运维效率，通过运营数据的采集和分析不断优化运营方案，降低运营、运维成本，缩短B端用户的盈利周期，针对不同的摆放点位及商业场景，匹配的不同机型及不同的商品供B端用户贴合自身特点来快速实现商业价值；针对C端用户的购物体验，将传统的纸币硬币购物流程替换成支付宝、微信、银联等线上扫码支付(或刷脸支付)等快捷支付方式。
+## 功能页面
 
-业务模式分为，自营模式、加盟模式或点位主分成模式等。
+- 登录与权限菜单
+- 商品管理、货道管理
+- 工单管理、订单管理
+- 策略管理、设备管理
+- 系统管理（用户、角色、菜单、日志）
 
-## 业务介绍
-随着售货机平台方运营售货机设备数量及点位数量越来越多，为了降低成本加快运营和运维效率将有限的资源迅速变现，平台方将系统做了切分，其中客户端包含三个：面向维修人员的运维客户端，主要用来跟踪和解决维修人员的日常工作和及时处理设备故障；运营客户端，主要用来提高日常运营效率，减少缺货设备，提高设备的盈利能力；C端用户客户端，面向C端用户的客户端，提高用户体验，缩短用户购物流程。
+## 技术栈
 
-为了更好的针对不同B端用户的使用习惯，平台端切分为两个端：平台管理端，主要为了管理设备、货道、商品、工单及运营、运维数据。合作商后台：针对有大量点位但是没有运营能力的用户提供数据接入和销售分成的管理。
+- Vue 3、Vite
+- Element Plus、Vue Router、Pinia
+- Axios、ECharts
+- RuoYi-Vue 3.8.7
+
+## 环境要求
+
+- Node.js 18+
+- npm 或 pnpm
+
+## 安装与启动
+
+~~~bash
+git clone https://github.com/Smasun0721/RuoYi-dkd-client.git
+cd RuoYi-dkd-client
+npm install
+npm run dev
+~~~
+
+开发环境默认通过 VITE_APP_BASE_API=/dev-api 代理到后端，后端地址见 .env.development 和 vite.config.js。
+
+## 关联仓库
+
+- 服务端：[RuoYi-dkd-server](https://github.com/Smasun0721/RuoYi-dkd-server)
+
+## 目录结构
+
+~~~text
+RuoYi-dkd-client/
+├── src/
+│   ├── api/
+│   ├── assets/
+│   ├── components/
+│   ├── layout/
+│   ├── router/
+│   ├── store/
+│   └── views/
+├── public/
+├── vite/
+├── package.json
+└── vite.config.js
+~~~
+
+## 说明
+
+本项目基于 RuoYi-Vue 3.8.7 前端脚手架二次开发，保留原框架的权限、菜单和基础组件，并实现帝可得业务页面。
